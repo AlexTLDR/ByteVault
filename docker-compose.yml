@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  # database
+  sql: # usually the service name is db but for my localhost this is already in use
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: bytevault
+      MYSQL_ROOT_PASSWORD: morty
+      MYSQL_USER: rick
+      MYSQL_PASSWORD: morty
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+     
+
+  # Adminer provides a nice little web UI to connect to databases
+  adminer:
+    image: adminer
+    restart: always
+    environment:
+      ADMINER_DESIGN: dracula # Pick a theme - https://github.com/vrana/adminer/tree/master/designs
+    ports:
+      - 4444:8080
