@@ -40,5 +40,18 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed) // using the clientError() helper
 		return
 	}
-	w.Write([]byte("Create a new snippet..."))
+
+	// dummy data for test purpose
+	title := "test title"
+	content := "test content\nTesting a new line,\nand this is the 2nd new line\n\n- 2 new lines"
+	expires := 7
+
+	// inserting the dummy data
+	id, err := app.snippets.Insert(title, content, expires)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	// user redirtect
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
 }
