@@ -3,6 +3,7 @@ package main
 import (
 	"html/template"
 	"path/filepath"
+	"time"
 
 	"github.com/AlexTLDR/ByteVault/internal/models"
 )
@@ -11,6 +12,14 @@ type templateData struct {
 	CurrentYear int
 	Snippet     models.Snippet
 	Snippets    []models.Snippet
+}
+
+var functions = template.FuncMap{
+	"humanDate": humanDate,
+}
+
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
 }
 
 // in memory map to cache parsed templates
@@ -30,7 +39,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		// 	page,
 		// }
 
-		ts, err := template.ParseFiles("./ui/html/base.html")
+		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.html")
 		if err != nil {
 			return nil, err
 		}
