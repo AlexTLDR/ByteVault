@@ -23,10 +23,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data := app.newTemplateData(r)
+	data.Snippets = snippets
+
 	// using the render helper
-	app.render(w, r, http.StatusOK, "home.html", templateData{
-		Snippets: snippets,
-	})
+	app.render(w, r, http.StatusOK, "home.html", data)
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -46,10 +47,10 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// TODO: decide in the view.html how to format the time in the snippet footer
+	data := app.newTemplateData(r)
+	data.Snippet = snippet
 	// using the render helper
-	app.render(w, r, http.StatusOK, "view.html", templateData{
-		Snippet: snippet,
-	})
+	app.render(w, r, http.StatusOK, "view.html", data)
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {

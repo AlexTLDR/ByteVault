@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 // The serverError helper logs an entry at the Error level (including the request
@@ -52,4 +53,10 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 
 	w.WriteHeader(status)
 	buf.WriteTo(w)
+}
+
+func (app *application) newTemplateData(r *http.Request) templateData {
+	return templateData{
+		CurrentYear: time.Now().Year(),
+	}
 }
