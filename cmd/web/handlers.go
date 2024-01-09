@@ -3,13 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
 	"github.com/AlexTLDR/ByteVault/internal/models"
 )
 
+// using the templateData struct holding the snippet data in templates.go for rendering multiple pieces of data
+// for this to work, in view.html render the struct, instead of a dot {{.Title}} chain the field names like {{.Snippet.Title}}
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		app.notFound(w) // using the notFound() helper
@@ -22,21 +23,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{"./ui/html/base.html", "./ui/html/pages/home.html", "./ui/html/partials/nav.html"}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err) // using the serverError() helper
-		return
-	}
-
-	data := templateData{
+	// using the render helper
+	app.render(w, r, http.StatusOK, "home.html", templateData{
 		Snippets: snippets,
-	}
-
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, r, err) // using the serverError() helper
-	}
+	})
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -56,23 +46,10 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// TODO: decide in the view.html how to format the time in the snippet footer
-	files := []string{"./ui/html/base.html", "./ui/html/partials/nav.html", "./ui/html/pages/view.html"}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
-	// using the templateData struct holding the snippet data in templates.go for rendering multiple pieces of data
-	// for this to work, in view.html render the struct, instead of a dot {{.Title}} chain the field names like {{.Snippet.Title}}
-	data := templateData{
+	// using the render helper
+	app.render(w, r, http.StatusOK, "view.html", templateData{
 		Snippet: snippet,
-	}
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, r, err)
-	}
+	})
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
