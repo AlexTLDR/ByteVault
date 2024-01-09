@@ -4,13 +4,13 @@
     {{with .Snippet}}
         <div class='snippet'>
             <div class='metadata'>
-                <strong>{{.Snippet.Title}}</strong>
-                <span>#{{.Snippet.ID}}</span>
+                <strong>{{.Title}}</strong>
+                <span>#{{.ID}}</span>
             </div>
-            <pre><code>{{.Snippet.Content}}</code></pre>
+            <pre><code>{{.Content}}</code></pre>
             <div class='metadata'>
-                <time>Created on {{.Snippet.Created.Weekday}}: {{.Snippet.Created}}</time>
-                <time>Expires: {{.Snippet.Expires}}</time>
+                <time>Created on {{.Created.Weekday}}: {{.Created}}</time>
+                <time>Expires: {{.Expires}}</time>
             </div>
         </div>
     {{end}}
