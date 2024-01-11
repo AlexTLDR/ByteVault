@@ -7,15 +7,12 @@ import (
 	"strconv"
 
 	"github.com/AlexTLDR/ByteVault/internal/models"
+	"github.com/julienschmidt/httprouter"
 )
 
 // using the templateData struct holding the snippet data in templates.go for rendering multiple pieces of data
 // for this to work, in view.html render the struct, instead of a dot {{.Title}} chain the field names like {{.Snippet.Title}}
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.notFound(w) // using the notFound() helper
-		return
-	}
 
 	snippets, err := app.snippets.Latest()
 	if err != nil {
@@ -31,9 +28,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil || id < 1 {
-		app.notFound(w) // using the notFound() helper
+		app.notFound(w)
 		return
 	}
 
@@ -54,15 +52,14 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		app.clientError(w, http.StatusMethodNotAllowed) // using the clientError() helper
-		return
-	}
+	w.Write([]byte("TODO: new snippet form"))
+}
+
+func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 
 	// dummy data for test purpose
-	title := "test title"
-	content := "test content\nTesting a new line,\nand this is the 2nd new line\n\n- 2 new lines"
+	title := "test title2"
+	content := "test content2\nTesting a new line,\nand this is the 2nd new line\n\n- 2 new lines"
 	expires := 7
 
 	// inserting the dummy data
@@ -72,5 +69,5 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// user redirtect
-	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }
