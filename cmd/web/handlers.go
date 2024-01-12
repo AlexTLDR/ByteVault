@@ -58,13 +58,21 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// creating the insert data
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	expires, err := strconv.Atoi(r.PostForm.Get("expires"))
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
-	// dummy data for test purpose
-	title := "test title2"
-	content := "test content2\nTesting a new line,\nand this is the 2nd new line\n\n- 2 new lines"
-	expires := 7
-
-	// inserting the dummy data
+	// inserting the data
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
 		app.serverError(w, r, err)
