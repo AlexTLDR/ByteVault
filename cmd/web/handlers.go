@@ -62,6 +62,11 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
+	// Initialize a new createSnippetForm instance and pass it to the template,
+	// using a default of 365 days
+	data.Form = snippetCreateForm{
+		Expires: 365,
+	}
 
 	app.render(w, r, http.StatusOK, "create.html", data)
 }
