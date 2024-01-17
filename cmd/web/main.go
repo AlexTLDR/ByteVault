@@ -7,8 +7,11 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/AlexTLDR/ByteVault/internal/models"
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -19,6 +22,16 @@ type application struct {
 	snippets      *models.SnippetModel
 	templateCache map[string]*template.Template
 	formDecoder   *form.Decoder
+	/* SQL query for sessions
+		CREATE TABLE sessions (
+	    token CHAR(43) PRIMARY KEY,
+	    data BLOB NOT NULL,
+	    expiry TIMESTAMP(6) NOT NULL
+		);
+
+		CREATE INDEX sessions_expiry_idx ON sessions (expiry);
+	*/
+	sessionManager *scs.SessionManager
 }
 
 func main() {
@@ -45,11 +58,19 @@ func main() {
 
 	formDecoder := form.NewDecoder()
 
+	// use the scs.New() function to initialize a new session manager
+
+	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+
+	// And add the session manager to our application dependencies.
 	app := &application{
-		logger:        logger,
-		snippets:      &models.SnippetModel{DB: db},
-		templateCache: templateCache,
-		formDecoder:   formDecoder,
+		logger:         logger,
+		snippets:       &models.SnippetModel{DB: db},
+		templateCache:  templateCache,
+		formDecoder:    formDecoder,
+		sessionManager: sessionManager,
 	}
 
 	logger.Info("starting server", "addr", *addr)
