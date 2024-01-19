@@ -64,6 +64,9 @@ func main() {
 	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
 
+	// setting the Secure attribute to session cookies
+	sessionManager.Cookie.Secure = true
+
 	// And add the session manager to our application dependencies.
 	app := &application{
 		logger:         logger,
@@ -79,8 +82,9 @@ func main() {
 	}
 
 	logger.Info("starting server", "addr", *addr)
-
-	err = srv.ListenAndServe()
+	// start the HTTPS server with ListenAndServeTLS()
+	// TODO: switch to caddy probably, in prod
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	logger.Error(err.Error())
 	os.Exit(1)
 }
