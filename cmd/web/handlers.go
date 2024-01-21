@@ -27,7 +27,7 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(w, "HTML form for logging in a user")
+	fmt.Fprintln(w, "HTML form for logging in a user")
 }
 
 func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
