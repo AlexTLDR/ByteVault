@@ -18,6 +18,26 @@ type snippetCreateForm struct {
 	validator.Validator `form:"-"`
 }
 
+func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "HTML form for new user signup")
+}
+
+func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Create new user")
+}
+
+func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(w, "HTML form for logging in a user")
+}
+
+func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "user authentication")
+}
+
+func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "user logout")
+}
+
 // using the templateData struct holding the snippet data in templates.go for rendering multiple pieces of data
 // for this to work, in view.html render the struct, instead of a dot {{.Title}} chain the field names like {{.Snippet.Title}}
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
