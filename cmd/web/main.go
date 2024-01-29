@@ -32,6 +32,7 @@ type application struct {
 
 		CREATE INDEX sessions_expiry_idx ON sessions (expiry);
 	*/
+	users          *models.UserModel
 	sessionManager *scs.SessionManager
 }
 
@@ -72,6 +73,7 @@ func main() {
 	app := &application{
 		logger:         logger,
 		snippets:       &models.SnippetModel{DB: db},
+		users:          &models.UserModel{DB: db},
 		templateCache:  templateCache,
 		formDecoder:    formDecoder,
 		sessionManager: sessionManager,
